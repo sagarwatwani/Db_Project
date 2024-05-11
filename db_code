@@ -39,6 +39,35 @@ def create_expense_tracker():
 
     root = tk.Tk()
     root.title("Expense Tracker")
+
+tk.Label(frame_expense, text="Expense Name:").pack()
+    expense_entry = tk.Entry(frame_expense)
+    expense_entry.pack()
+
+    tk.Label(frame_expense, text="Amount:").pack()
+    amount_entry = tk.Entry(frame_expense)
+    amount_entry.pack()
+
+    tk.Label(frame_expense, text="Category:").pack()
+    category_var = tk.StringVar()
+    tk.OptionMenu(frame_expense, category_var, "Food", "Travel", "Savings", "Misc").pack()
+
+    tk.Button(frame_expense, text="Add Expense", command=add_expense).pack()
+
+    frame_table = tk.Frame(root)
+    frame_table.pack()
+
+    tree = ttk.Treeview(frame_table, columns=("name", "amount", "category"), show="headings")
+    tree.heading("name", text="Expense Name")
+    tree.heading("amount", text="Amount")
+    tree.heading("category", text="Category")
+    tree.pack()
+
+    load_data()
+
+    root.mainloop()
+
+create_expense_tracker()
     root.geometry("500x400")
 
     frame_expense = tk.Frame(root)
