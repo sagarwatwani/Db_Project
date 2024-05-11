@@ -3,5 +3,5 @@ CREATE TABLE expenses (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
-    category VARCHAR(20) NOT NULL
+     category VARCHAR(20) NOT NULL
 );
