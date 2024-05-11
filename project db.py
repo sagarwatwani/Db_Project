@@ -1,0 +1,74 @@
+import tkinter as tk
+from tkinter import ttk
+import psycopg2
+
+def create_expense_tracker():
+    def add_expense():
+        name = expense_entry.get()
+        amount = float(amount_entry.get())
+        category = category_var.get()
+
+        if name and amount:
+            cursor.execute("""
+                INSERT INTO expenses (name, amount, category) VALUES (%s, %s, %s)
+            """, (name, amount, category))
+
+            conn.commit()
+            load_data()
+            expense_entry.delete(0, tk.END)
+            amount_entry.delete(0, tk.END)
+
+    def load_data():
+        tree.delete(*tree.get_children())
+        cursor.execute("SELECT * FROM expenses")
+        rows = cursor.fetchall()
+
+        for row in rows:
+            tree.insert("", tk.END, values=row)
+
+    conn = psycopg2.connect(
+        user="postgres",
+        password="admin123",
+        host="localhost",
+        port="5432",
+        database="project"
+    )
+    cursor = conn.cursor()
+
+
+
+    root = tk.Tk()
+    root.title("Expense Tracker")
+    root.geometry("500x400")
+
+    frame_expense = tk.Frame(root)
+    frame_expense.pack()
+
+    tk.Label(frame_expense, text="Expense Name:").pack()
+    expense_entry = tk.Entry(frame_expense)
+    expense_entry.pack()
+
+    tk.Label(frame_expense, text="Amount:").pack()
+    amount_entry = tk.Entry(frame_expense)
+    amount_entry.pack()
+
+    tk.Label(frame_expense, text="Category:").pack()
+    category_var = tk.StringVar()
+    tk.OptionMenu(frame_expense, category_var, "Food", "Travel", "Savings", "Misc").pack()
+
+    tk.Button(frame_expense, text="Add Expense", command=add_expense).pack()
+
+    frame_table = tk.Frame(root)
+    frame_table.pack()
+
+    tree = ttk.Treeview(frame_table, columns=("name", "amount", "category"), show="headings")
+    tree.heading("name", text="Expense Name")
+    tree.heading("amount", text="Amount")
+    tree.heading("category", text="Category")
+    tree.pack()
+
+    load_data()
+
+    root.mainloop()
+
+create_expense_tracker()
